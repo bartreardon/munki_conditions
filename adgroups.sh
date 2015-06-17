@@ -12,6 +12,6 @@ USER_AD_GROUPS=$(dscl /Active\ Directory/$AD_DOMAIN/All\ Domains -read /Users/$C
 IFS=$'\n'
 
 for GROUP_NAME in $USER_AD_GROUPS; do
-	echo $GROUP_NAME
+	#echo $GROUP_NAME
 	$DEFAULTS write "$COND_DOMAIN" console_user_ad_group_member_of -array-add "$GROUP_NAME"
 done

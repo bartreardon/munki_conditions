@@ -18,15 +18,13 @@ fi
 # determine the current console user
 CONSOLE_USER=$(who | grep console | cut -d ' ' -f1)
 
-# determine the main user of the machine
-AC_RESULT=$(ac -p | awk '!/total/' | sort -rnk 2 | head -n 1)
-MOST_USER=$(echo "$AC_RESULT" | awk '{print $1}')
-
 # run test based on the current console user - if no console user, take the user with the most time on the machine.
 if [[ $CONSOLE_USER != "" ]]; then
 	USER_ACC=$CONSOLE_USER
 else
-	USER_ACC=$MOST_USER
+	# determine the main user of the machine
+	AC_RESULT=$(ac -p | awk '!/total/' | sort -rnk 2 | head -n 1)
+	USER_ACC=$(echo "$AC_RESULT" | awk '{print $1}')
 fi
 
 USER_AD_GROUPS=$(dscl "/Active Directory/$AD_NODE/All Domains" -read /Users/$USER_ACC dsAttrTypeNative:memberOf | sed -e 's/.*CN=//g;s/,OU=.*//g')

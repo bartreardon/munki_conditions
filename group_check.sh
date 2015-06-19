@@ -23,7 +23,7 @@ if [[ $CONSOLE_USER != "" ]]; then
 else
 	# Console user failed - determine the main user of the machine
 	AC_RESULT=$(ac -p | awk '!/total/' | sort -rnk 2 | head -n 1)
-	USER_ACC=$(echo "$AC_RESULT" | awk '{print $1}')¬  
+	USER_ACC=$(echo "$AC_RESULT" | awk '{print $1}')
 fi
 
 # determine is user is included in the right group

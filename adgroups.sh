@@ -8,8 +8,12 @@ MUNKI_DIR=$($DEFAULTS read /Library/Preferences/ManagedInstalls ManagedInstallDi
 COND_DOMAIN="$MUNKI_DIR/ConditionalItems"
 
 # get AD info
-AD_PLIST=$(ls /Library/Preferences/OpenDirectory/Configurations/Active\ Directory/)
-AD_NODE=$(defaults read /Library/Preferences/OpenDirectory/Configurations/Active\ Directory/$AD_PLIST "node name")
+AD_NODE=$(dscl localhost -list "/Active Directory")
+
+if [[ $AD_NODE == "" ]; then
+	echo "Not joined to a domain - exiting"
+	exit 0
+fi
 
 # determine the current console user
 CONSOLE_USER=$(who | grep console | cut -d ' ' -f1)
@@ -25,7 +29,7 @@ else
 	USER_ACC=$MOST_USER
 fi
 
-USER_AD_GROUPS=$(dscl "$AD_NODE/All Domains" -read /Users/$USER_ACC dsAttrTypeNative:memberOf | sed -e 's/.*CN=//g;s/,OU=.*//g')
+USER_AD_GROUPS=$(dscl "/Active Directory/$AD_NODE/All Domains" -read /Users/$USER_ACC dsAttrTypeNative:memberOf | sed -e 's/.*CN=//g;s/,OU=.*//g')
 IFS=$'\n'
 
 for GROUP_NAME in $USER_AD_GROUPS; do

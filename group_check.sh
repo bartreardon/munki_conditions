@@ -36,7 +36,7 @@ while read LINE; do
 		IS_MEMBER="FALSE"
 	fi
 
-	$DEFAULTS write ""$COND_DOMAIN" "$LINE" -bool $IS_MEMBER
+	$DEFAULTS write "$COND_DOMAIN" "$LINE" -bool $IS_MEMBER
 
 done < "$GROUP_LIST"
 

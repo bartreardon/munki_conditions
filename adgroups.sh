@@ -10,7 +10,7 @@ COND_DOMAIN="$MUNKI_DIR/ConditionalItems"
 # get AD info
 AD_NODE=$(dscl localhost -list "/Active Directory")
 
-if [[ $AD_NODE == "" ]; then
+if [[ $AD_NODE == "" ]]; then
 	echo "Not joined to a domain - exiting"
 	exit 0
 fi

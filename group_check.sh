@@ -1,12 +1,13 @@
 #!/bin/sh
 
 # security groups to check
-declare -a GROUP_ARRAY=("ACL_SCCM_WebExProdToolsTestUsers_Install" \
-						"ACL_SCCM_WebExProdTools_Install")
+#declare -a GROUP_ARRAY=("ACL_SCCM_WebExProdToolsTestUsers_Install" \
+#						"ACL_SCCM_WebExProdTools_Install")
 
 DEFAULTS=/usr/bin/defaults
 MUNKI_DIR=$($DEFAULTS read /Library/Preferences/ManagedInstalls ManagedInstallDir)
 COND_DOMAIN="$MUNKI_DIR/ConditionalItems"
+GROUPFILE="$MUNKI_DIR/Group_List"
 
 # determine the current console user
 CONSOLE_USER=$(who | grep console | cut -d ' ' -f1)
@@ -24,16 +25,16 @@ fi
 
 # determine is user is included in the right group
 
-for GROUP in "${GROUP_ARRAY[@]}"; do
-	GROUP_MEMBERSHIP=$(dsmemberutil checkmembership -U "$USER_ACC" -G "$GROUP")
+while read LINE; do
+	GROUP_MEMBERSHIP=$(dsmemberutil checkmembership -U "$USER_ACC" -G "$LINE")
 
 	if [[ $GROUP_MEMBERSHIP == "user is a member of the group" ]]; then
 		#exit 0
-		$DEFAULTS write "$COND_DOMAIN" $GROUP -bool TRUE
+		$DEFAULTS write "$COND_DOMAIN" "$LINE" -bool TRUE
 	else
 		#exit 1
-		$DEFAULTS write "$COND_DOMAIN" $GROUP -bool FALSE
+		$DEFAULTS write "$COND_DOMAIN" "$LINE" -bool FALSE
 	fi
-done
+done < "$GROUPFILE"
 
 exit 0
